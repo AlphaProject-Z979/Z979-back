@@ -1,3 +1,8 @@
+from atexit import register
 from django.contrib import admin
+from .models import User
 
-# Register your models here.
+class profileAdmin(admin.ModelAdmin):
+    pass
+
+admin.site.register(User,profileAdmin)
