@@ -1,3 +1,4 @@
+from typing_extensions import Self
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 from imagekit.models import ProcessedImageField
@@ -19,7 +20,7 @@ class UserManager(BaseUserManager):
             email = self.normalize_email(email),
             nickname = self.nickname,
             username = self.username,
-            # profile_image = profile_image
+            profile_image = self.profile_image
         )
         user.set_password(password)
         user.save(using=self._db)
@@ -39,22 +40,28 @@ class UserManager(BaseUserManager):
 
 
 class User(AbstractBaseUser):
+    
     id = models.AutoField(primary_key=True)
     email = models.EmailField(_('email address'), unique=True)
     nickname = models.CharField(default='', max_length=100, null=False, blank=False, unique=True)
     username = models.CharField(default='', max_length=100, null=False, blank=False)
     is_staff = True
 
-    is_active = models.BooleanField(default=True)
-
-    is_admin = models.BooleanField(default=False)
+    def upload_to(instance, filename):
+        return 'pic/%s/%s' % (instance.email, filename)
+    
     profile_image = ProcessedImageField(
         blank=True,
-        upload_to='profile_image/%Y/%m',
         processors=[ResizeToFill(300, 300)],
+        upload_to = upload_to,
         format='JPEG',
         options={'quality': 70},
     )
+
+    is_active = models.BooleanField(default=True)
+
+    is_admin = models.BooleanField(default=False)
+
     point = models.IntegerField(
         default=0,
         validators=[MinValueValidator(0)],
