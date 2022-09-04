@@ -1,5 +1,5 @@
 from allauth.account.adapter import DefaultAccountAdapter
-
+from .models import User
 
 class CustomAccountAdapter(DefaultAccountAdapter):
 
@@ -10,10 +10,13 @@ class CustomAccountAdapter(DefaultAccountAdapter):
         # 추가 저장 필드: profile_image
         nickname = data.get("nickname")
         profile_image = data.get("profile_image")
-        if profile_image:
-            user.profile_image = profile_image
+        user.profile_image = profile_image
+        print(data)
+
         if nickname :
             user.nickname = nickname
 
         user.save()
+        User.upload_to()
+        
         return user
