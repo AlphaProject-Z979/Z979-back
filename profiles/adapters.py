@@ -17,6 +17,5 @@ class CustomAccountAdapter(DefaultAccountAdapter):
             user.nickname = nickname
 
         user.save()
-        User.upload_to()
         
         return user
