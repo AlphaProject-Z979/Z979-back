@@ -173,8 +173,8 @@ ACCOUNT_ADAPTER = 'profiles.adapters.CustomAccountAdapter'
 
 ###########################AWS
 
-AWS_ACCESS_KEY_ID = 'AKIA4ZDQ3FO5TVXGL5NP' # .csv 파일에 있는 내용을 입력 Access key ID
-AWS_SECRET_ACCESS_KEY = 'ZAM8SMlJ2FZnkCJ1P6eY5VbfivplkG6UaNH2SfFV' # .csv 파일에 있는 내용을 입력 Secret access key
+AWS_ACCESS_KEY_ID = '' # .csv 파일에 있는 내용을 입력 Access key ID
+AWS_SECRET_ACCESS_KEY = '' # .csv 파일에 있는 내용을 입력 Secret access key
 AWS_REGION = 'ap-northeast-2'
 
 ###S3 Storages
