@@ -1,4 +1,4 @@
-from typing_extensions import Self
+# from typing_extensions import Self
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 from imagekit.models import ProcessedImageField

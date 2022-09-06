@@ -9,6 +9,7 @@ from .dto.feed_read_dto import SpecificFeedDto
 from .serializers import FeedSerializer
 from .models import Feed
 from challenge.models import Challenge
+from profiles.models import User
 from .dto import feed_update_dto
 from django.core import serializers
 import json
@@ -17,23 +18,28 @@ import json
 @api_view(['POST'])
 def post_feed(request, user_id):
     # User객체 찾아오는 코드 필요
+    user = User.objects.filter(id=user_id)
 
+    if not user:
+        return Response({"message" : "유저가 없습니다."}, status=status.HTTP_400_BAD_REQUEST)
     #
+
     serializer = FeedSerializer(data=request.data)
 
     if serializer.is_valid(raise_exception=True):
         challenge_info = Challenge.objects.get(id=request.data['challenge'])
         serializer.validated_data['challenge'] = challenge_info
-        serializer.save()
+        serializer.validated_data['user'] = user[0]
+        save_data = serializer.save()
 
-        feed_info = Feed.objects.get(id=1)
         data = {
-            "content" : feed_info.content,
-            "hashtags" : feed_info.hashtags
+            "content" : save_data.content,
+            "hashtags" : save_data.hashtags
         }
 
         return Response({"data" : data}, status=status.HTTP_201_CREATED)
     else:
+        print(serializer.errors)
         return HttpResponse("post fail", status=status.HTTP_400_BAD_REQUEST)
 
 # 피드 수정
@@ -67,7 +73,7 @@ def all_feed_list(request):
     res_data = []
 
     for feed in feed_list:
-        feed_dto =SpecificFeedDto("cha", feed.content, feed.hashtags, feed.like, feed.is_challenge)
+        feed_dto =SpecificFeedDto(feed.user.nickname, feed.content, feed.hashtags, feed.like, feed.is_challenge)
         res_data.append(feed_dto.__dict__)
 
     return Response({"feed_cnt" : len(res_data),"data":res_data}, status=status.HTTP_200_OK)
@@ -81,7 +87,7 @@ def find_challenge_feed(request):
 
     for feed in all_feed:
         if feed.is_challenge:
-            feed_dto = SpecificFeedDto("cha", feed.content, feed.hashtags, feed.like, feed.is_challenge)
+            feed_dto = SpecificFeedDto(feed.user.nickname, feed.content, feed.hashtags, feed.like, feed.is_challenge)
             res_data.append(feed_dto.__dict__)
 
     return Response({"feed_cnt": len(res_data), "data": res_data}, status=status.HTTP_200_OK)
@@ -111,7 +117,7 @@ def find_challenge_feed_orderby_like(request,challenge_id):
         if feed.is_challenge:
             if feed.challenge.id == challenge_id:
 
-                feed_dto = SpecificFeedDto("cha", feed.content, feed.hashtags, feed.like, feed.is_challenge)
+                feed_dto = SpecificFeedDto(feed.user.nickname, feed.content, feed.hashtags, feed.like, feed.is_challenge)
                 res_data.append(feed_dto.__dict__)
 
     res_data.sort(key=lambda x : x['like'], reverse=True)
@@ -123,3 +129,21 @@ def find_challenge_feed_orderby_like(request,challenge_id):
 # 피드 삭제
 
 # 내 글 모아보기
+@api_view(['GET'])
+def find_my_feed(request, user_id):
+
+    user = User.objects.filter(id=user_id)
+
+    if not user:
+        return Response({"message": "유저가 없습니다."}, status=status.HTTP_400_BAD_REQUEST)
+
+    my_feeds = Feed.objects.filter(user=user[0])
+    res_data = []
+
+    for feed in my_feeds:
+        if feed.is_challenge:
+            feed_dto = SpecificFeedDto(feed.user.nickname, feed.content, feed.hashtags, feed.like, feed.is_challenge)
+            res_data.append(feed_dto.__dict__)
+
+
+    return Response({"feed_cnt": len(res_data), "data": res_data}, status=status.HTTP_200_OK)
