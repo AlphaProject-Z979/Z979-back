@@ -145,5 +145,4 @@ def find_my_feed(request, user_id):
             feed_dto = SpecificFeedDto(feed.user.nickname, feed.content, feed.hashtags, feed.like, feed.is_challenge)
             res_data.append(feed_dto.__dict__)
 
-
     return Response({"feed_cnt": len(res_data), "data": res_data}, status=status.HTTP_200_OK)
