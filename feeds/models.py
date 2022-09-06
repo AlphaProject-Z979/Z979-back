@@ -2,7 +2,7 @@ import json
 
 from django.db import models
 from challenge.models import Challenge
-
+from profiles.models import User
 # 본문
 # 해시태그
 # 이미지
@@ -15,7 +15,7 @@ class Feed(models.Model):
     like = models.IntegerField(default=0)
     challenge = models.ForeignKey(Challenge,on_delete=models.CASCADE, null=True)
     is_challenge = models.BooleanField(default=True)
-    # user = models.ForeignKey(Profile, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
 
 
     def set_hashtag(self, tags):
