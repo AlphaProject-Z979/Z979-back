@@ -96,6 +96,9 @@ def participate_challenge(request,challenge_id, user_id):
     user_challenge.end_date = end_date
     user_challenge.save()
 
+    challenge[0].count += 1
+    challenge[0].save()
+
 
     return Response({"start": today, "end":user_challenge.end_date}, status.HTTP_200_OK)
 
