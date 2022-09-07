@@ -54,11 +54,9 @@ def update_feed(request, user_id, feed_id):
     base_feed.content = request.data['content']
     base_feed.hashtags = request.data['hashtags']
 
-    base_feed.save()
+    save_data = base_feed.save()
 
-    update_feed_info = Feed.objects.get(pk=1)
-
-    res_feed_data = json.dumps(FeedUpdateDto(update_feed_info.content, update_feed_info.hashtags).__dict__)
+    res_feed_data = json.dumps(FeedUpdateDto(save_data.content, save_data.hashtags).__dict__)
 
     return Response({
         "data" : res_feed_data

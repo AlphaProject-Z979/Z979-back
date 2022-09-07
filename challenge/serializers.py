@@ -9,4 +9,3 @@ class ChallengeSerializer(serializers.ModelSerializer):
 class UserChallengeSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserChallenge
-        fields = '__all__'
