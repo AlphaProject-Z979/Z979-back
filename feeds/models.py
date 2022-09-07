@@ -16,6 +16,7 @@ class Feed(models.Model):
     challenge = models.ForeignKey(Challenge,on_delete=models.CASCADE, null=True)
     is_challenge = models.BooleanField(default=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
+    is_get_stamp = models.BooleanField(default=False)
 
 
     def set_hashtag(self, tags):
@@ -23,6 +24,10 @@ class Feed(models.Model):
 
     def get_hashtag(self):
         return json.loads(self.hashtag)
+
+    def like_feed(self):
+        self.like += 1
+        return self.like
 
 class FeedImage(models.Model):
     feed = models.ForeignKey(Feed, on_delete=models.CASCADE)

@@ -24,4 +24,5 @@ urlpatterns = [
     path("feeds/", include("feeds.urls")),
     path("challenges/", include("challenge.urls")),
     path("profiles/v1/", include("profiles.urls")),
+    path("stamps/", include("stamp.urls")),
 ]
