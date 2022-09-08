@@ -4,10 +4,21 @@ from profiles.models import User
 # 챌린지 이름
 # 챌린지 설명
 # 참여 인원
+def upload_to(instance, filename):
+    import os
+    from random import randint
+    from django.utils.timezone import now
+    filename_base, filename_ext = os.path.splitext(filename)
+
+    return 'feeds/%s' % (
+        # instance.id,
+            now().strftime('%Y%m%d') + '_' + str(randint(10000000, 99999999))
+    )
+
 class Challenge(models.Model):
     challenge_name = models.CharField(max_length=100, null=False)
     challenge_description = models.CharField(max_length=100, null=False)
-    # thumbnail = models.CharField(max_length=100)
+    image = models.ImageField(upload_to=upload_to, null=True)
     count = models.IntegerField(default=0)
 
 
