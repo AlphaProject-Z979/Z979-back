@@ -22,7 +22,7 @@ import json
 def register_challenge(request):
 
     serialize = ChallengeSerializer(data=request.data)
-    print(serialize)
+
     if serialize.is_valid():
         serialize.save()
 
@@ -37,10 +37,11 @@ def find_challenge_list(request):
 
     data = []
     for challenge in challenges:
-
+        # print(challenge.)
         res_dict = FindChallengeTypeDto(
             challenge.challenge_name,
-            challenge.challenge_description
+            challenge.challenge_description,
+            challenge.image.url
         ).__dict__
         data.append(res_dict)
 
@@ -62,7 +63,8 @@ def challenge_detail_feed(request, challenge_id):
     for feed in feeds:
         res_feed_dict = FindChallengeFeedDto(
             feed.content,
-            feed.hashtag
+            feed.hashtags,
+            feed.image.url
         ).__dict__
         feed_data.append(res_feed_dict)
 
