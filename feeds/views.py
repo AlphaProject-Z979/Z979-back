@@ -11,6 +11,8 @@ from .serializers import FeedSerializer
 from .models import Feed
 from challenge.models import Challenge
 from profiles.models import User
+from stamp.serializers import StampSerializer
+from stamp.models import Stamp
 from .dto import feed_update_dto
 from django.core import serializers
 import json
@@ -107,16 +109,21 @@ def find_challenge_feed(request):
 @api_view(['PUT'])
 def like_feed(request, feed_id):
     feed = Feed.objects.get(id= feed_id)
-    feed.like += 1
-    if feed.like >= 5:
-        # 스탬프 부여 코드
-        print(end="")
+
+    res = feed.like_feed()
+
+    if res >= 5 and not feed.is_get_stamp:
+        stamp = Stamp()
+        stamp.user = feed.user
+        stamp.is_challenge = feed.is_challenge
+        stamp.save()
+        feed.is_get_stamp = True
 
     feed.save()
 
-    res_data = Feed.objects.get(id=feed_id)
 
-    return Response({'like': res_data.like}, status=200)
+
+    return Response({'like': res}, status=200)
 
 # 챌린지 별 피드 좋아요 순
 @api_view(['GET'])

@@ -29,6 +29,9 @@ class Feed(models.Model):
     is_challenge = models.BooleanField(default=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     image = models.ImageField(upload_to=upload_to, null=True)
+    is_get_stamp = models.BooleanField(default=False)
+
+
 
     def set_hashtag(self, tags):
         self.hashtag = json.dumps(tags)
@@ -36,12 +39,10 @@ class Feed(models.Model):
     def get_hashtag(self):
         return json.loads(self.hashtag)
 
-    def create(cls, content, hashtags, like, challenge, is_challenge, user, image):
-        feed = cls(content, hashtags, like, challenge, is_challenge, user, image)
 
-        return feed
-
-    # def __init__(self, content, hashtags, like, challenge, is_challenge, user, image):
+    def like_feed(self):
+        self.like += 1
+        return self.like
 
 
 class FeedImage(models.Model):
