@@ -1,3 +1,4 @@
+import boto3
 from django.shortcuts import render
 from rest_framework.decorators import api_view
 from django.http import HttpResponse, JsonResponse
@@ -17,6 +18,8 @@ import json
 # 피드 작성
 @api_view(['POST'])
 def post_feed(request, user_id):
+    # print(request.data['image'])
+    # raise ValueError
     # User객체 찾아오는 코드 필요
     user = User.objects.filter(id=user_id)
 
@@ -67,12 +70,22 @@ def update_feed(request, user_id, feed_id):
 # TODO : 닉네임 부분 실제 user객체의 닉네임으로 수정해야함
 @api_view(['GET'])
 def all_feed_list(request):
+    s3 = boto3.resource('s3')
+
     feed_list = Feed.objects.all()
+
+
     res_data = []
 
     for feed in feed_list:
-        feed_dto =SpecificFeedDto(feed.user.nickname, feed.content, feed.hashtags, feed.like, feed.is_challenge)
+        print(feed.image.url)
+        # bucket = s3.Bucket('z979')
+        # object = bucket.Object(feed.image)
+        # image = object.key
+
+        feed_dto = SpecificFeedDto(feed.user.nickname, feed.content, feed.hashtags, feed.like, feed.is_challenge, feed.image.url)
         res_data.append(feed_dto.__dict__)
+
 
     return Response({"feed_cnt" : len(res_data),"data":res_data}, status=status.HTTP_200_OK)
 
@@ -85,7 +98,7 @@ def find_challenge_feed(request):
 
     for feed in all_feed:
         if feed.is_challenge:
-            feed_dto = SpecificFeedDto(feed.user.nickname, feed.content, feed.hashtags, feed.like, feed.is_challenge)
+            feed_dto = SpecificFeedDto(feed.user.nickname, feed.content, feed.hashtags, feed.like, feed.is_challenge, feed.image.url)
             res_data.append(feed_dto.__dict__)
 
     return Response({"feed_cnt": len(res_data), "data": res_data}, status=status.HTTP_200_OK)
@@ -115,7 +128,7 @@ def find_challenge_feed_orderby_like(request,challenge_id):
         if feed.is_challenge:
             if feed.challenge.id == challenge_id:
 
-                feed_dto = SpecificFeedDto(feed.user.nickname, feed.content, feed.hashtags, feed.like, feed.is_challenge)
+                feed_dto = SpecificFeedDto(feed.user.nickname, feed.content, feed.hashtags, feed.like, feed.is_challenge,feed.image.url)
                 res_data.append(feed_dto.__dict__)
 
     res_data.sort(key=lambda x : x['like'], reverse=True)
@@ -140,7 +153,7 @@ def find_my_feed(request, user_id):
 
     for feed in my_feeds:
         if feed.is_challenge:
-            feed_dto = SpecificFeedDto(feed.user.nickname, feed.content, feed.hashtags, feed.like, feed.is_challenge)
+            feed_dto = SpecificFeedDto(feed.user.nickname, feed.content, feed.hashtags, feed.like, feed.is_challenge,feed.image.url)
             res_data.append(feed_dto.__dict__)
 
     return Response({"feed_cnt": len(res_data), "data": res_data}, status=status.HTTP_200_OK)
