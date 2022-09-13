@@ -6,7 +6,8 @@ from feeds.models import Feed, FeedImage
 class FeedSerializer(serializers.ModelSerializer):
     class Meta:
         model = Feed
-        fields = '__all__'
+        fields = ("content", "hashtags", "challenge", "image")
+
 
 class FeedImageSerializer(serializers.ModelSerializer):
     class Meta:
